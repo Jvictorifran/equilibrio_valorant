@@ -1,0 +1,47 @@
+# Generated for deployment to Fly.io. Adjust `app` and `primary_region`
+# to match what you choose when running `fly launch` / `fly apps create`.
+#
+# IMPORTANT: this app uses a single SQLite file on a persistent volume.
+# Never scale this app to more than 1 machine (`fly scale count 1`) —
+# a second machine would get its own empty volume and the two would
+# silently diverge. See DEPLOY.md.
+
+app = "sorteio-equilibrado"
+primary_region = "gru"
+
+[build]
+
+[env]
+APP_ENV = "production"
+APP_DEBUG = "false"
+APP_URL = "https://sorteio-equilibrado.fly.dev"
+LOG_CHANNEL = "stderr"
+LOG_LEVEL = "info"
+DB_CONNECTION = "sqlite"
+DB_DATABASE = "/data/database.sqlite"
+SESSION_DRIVER = "database"
+CACHE_STORE = "database"
+QUEUE_CONNECTION = "database"
+
+[[mounts]]
+source = "sorteio_data"
+destination = "/data"
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = "stop"
+auto_start_machines = true
+min_machines_running = 0
+processes = ["app"]
+
+[[http_service.checks]]
+grace_period = "10s"
+interval = "30s"
+method = "GET"
+timeout = "5s"
+path = "/login"
+
+[[vm]]
+size = "shared-cpu-1x"
+memory = "512mb"
