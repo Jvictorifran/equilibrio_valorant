@@ -17,7 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        // Fly.io terminates TLS at its edge proxy and forwards plain HTTP
+        // internally. Without this, Laravel thinks every request is HTTP
+        // and generates asset/route URLs as http://, which browsers block
+        // as mixed content on an https:// page. Fly's proxy is the only
+        // ingress, so trusting it here is safe.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

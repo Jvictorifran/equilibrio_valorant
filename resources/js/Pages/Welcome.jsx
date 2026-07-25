@@ -11,7 +11,7 @@ const steps = [
     {
         n: '02',
         title: 'Todo mundo entra',
-        body: 'Cada jogador entra com o código e preenche elo, tracker score e HS%.',
+        body: 'Cada jogador entra com o código e preenche elo, KD, win rate e HS%.',
     },
     {
         n: '03',
@@ -67,8 +67,8 @@ export default function Welcome({ canLogin, canRegister }) {
                             </h1>
                             <p className="mt-6 max-w-md font-mono text-base text-mist">
                                 Cria a sala, chama o pessoal, todo mundo
-                                joga elo, tracker e HS% — o sorteio divide
-                                os 10 jogadores em dois times o mais
+                                informa elo, KD, win rate e HS% — o sorteio
+                                divide os 10 jogadores em dois times o mais
                                 parelhos possível. Sem stack escondida,
                                 sem time saco.
                             </p>

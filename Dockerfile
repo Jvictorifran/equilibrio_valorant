@@ -36,16 +36,25 @@ RUN composer install \
 # ============================================================
 # Production image
 # ============================================================
-FROM serversideup/php:8.4-fpm-nginx-alpine AS production
+# fpm-nginx uses s6-overlay, which requires being PID 1 — Fly Machines
+# don't give it that, so it crashes on boot there (works fine on plain
+# `docker run`, which is why this only shows up once deployed). The
+# "unit" variant doesn't use s6, so it's the one that actually boots on
+# Fly. It's a deprecated image upstream (NGINX Unit was archived by
+# NGINX in 2025) — functional today, but worth migrating off later
+# (e.g. to FrankenPHP) if serversideup drops the image. See DEPLOY.md.
+FROM serversideup/php:8.4-unit AS production
 
 ENV PHP_OPCACHE_ENABLE=1 \
     AUTORUN_ENABLED=true \
-    SHOW_WELCOME_MESSAGE=false
+    SHOW_WELCOME_MESSAGE=false \
+    UNIT_SKIP_DEPRECATION_DELAY=true
 
 # The base image drops to www-data by default. We stay on root so the
 # entrypoint.d script below can fix ownership of the Fly volume mounted
-# at /data on first boot — nginx/php-fpm still hand worker processes off
-# to www-data internally, so this doesn't run the app itself as root.
+# at /data on first boot — Unit's PHP worker processes still run
+# unprivileged (as "nobody") internally, so this doesn't run the app
+# itself as root.
 USER root
 
 COPY --chmod=755 .fly/entrypoint.d/ /etc/entrypoint.d/

@@ -54,7 +54,7 @@ fly volumes list                # conferir o volume
 
 ## Se algo der errado na permissão do volume
 
-O `.fly/entrypoint.d/2-fix-data-volume-permissions.sh` corrige a dono do
+O `.fly/entrypoint.d/60-fix-data-volume-permissions.sh` corrige a dono do
 diretório do volume automaticamente a cada boot. Se mesmo assim aparecer erro
 de permissão no arquivo `.sqlite`, rode manualmente:
 
